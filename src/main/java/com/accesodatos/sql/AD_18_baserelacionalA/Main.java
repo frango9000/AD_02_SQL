@@ -75,7 +75,7 @@ Dende esta aplicacion java :
 Que debemos facer : dende aplicacion java
 
 
-	- inserir varios rexistros na taboa mediante o metodo insireProduto creado anteriormente usando sentencias
+1	- inserir varios rexistros na taboa mediante o metodo insireProduto creado anteriormente usando sentencias
 	sql standard
 	os rexistros a  inserir son
  		 p1 , parafusos, 3
@@ -85,11 +85,11 @@ Que debemos facer : dende aplicacion java
  	- Comprobar dende sqlplus que os rexistros foron creados .
 
 
-	- actualizar o prezo dun produto mediante o metodo actualizarPre  creado anteriormente .
+2	- actualizar o prezo dun produto mediante o metodo actualizarPre  creado anteriormente .
 	- comprobar dende sqlplus que dita actualizacion tivo lugar correctamente
-	- listar mediante o metodo listaProdutos todos os datos das filas que se atopan na taboa produtos.
-	- borrar mediante o metodo borrarFila un producto.
-	- amosar mediante o metodo amosarFila os datos dun produto
+3	- listar mediante o metodo listaProdutos todos os datos das filas que se atopan na taboa produtos.
+4	- borrar mediante o metodo borrarFila un producto.
+5	- amosar mediante o metodo amosarFila os datos dun produto
 
 
 metodos necesarios para desenvolver esta aplicacion:
@@ -105,9 +105,47 @@ aplicar o metodo executeQuery("consulta") ao obxecto Statement
  */
 package com.accesodatos.sql.AD_18_baserelacionalA;
 
+import com.accesodatos.sql.misc.IPersistable;
+import com.accesodatos.sql.misc.SessionDB;
+import java.util.ArrayList;
+
 public class Main {
 
     public static void main(String[] args) {
+        String[] cod = {"p1", "p2", "p3"};
+        String[] desc = {"parafusos", "cravos", "tachas"};
+        int[] prezo = {3, 4, 5};
+        ArrayList<Producto> products = new ArrayList<>();
+        for (int i = 0; i < cod.length; i++) {
+            products.add(new Producto(cod[i], desc[i], prezo[i]));
+        }
+        //establish  connection
+        SessionDB.getSession().setAutoclose(false);
 
+        //clean table
+        ProductosDao.getSession().queryAll().values().forEach(IPersistable::deleteFromDb);
+
+        //1
+        for (Producto producto : products) {
+            producto.insertIntoDB();
+        }
+
+        //2
+        Producto product = products.get(1);
+        product.setDescripcion("Modificacion");
+        System.out.println("Producto " + product.getId() + (product.updateOnDb() > 0 ? " " : " no") + "actualizado;");
+
+        //3
+        ProductosDao.getSession().queryAll().forEach((k, v) -> System.out.println(v.toString()));
+
+        //4
+        product = products.get(0);
+        product.deleteFromDb();
+        System.out.println("Producto " + product.getId() + (product.updateOnDb() > 0 ? " " : " no") + "eliminado;");
+
+        //5
+        System.out.println(ProductosDao.getSession().query("p2").toString());
+
+        SessionDB.getSession().setAutoclose(true);
     }
 }
