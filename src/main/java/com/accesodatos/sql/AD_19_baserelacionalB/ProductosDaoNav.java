@@ -3,6 +3,7 @@ package com.accesodatos.sql.AD_19_baserelacionalB;
 import com.accesodatos.sql.AD_18_baserelacionalA.Producto;
 import com.accesodatos.sql.AD_18_baserelacionalA.ProductosDao;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -100,6 +101,23 @@ public class ProductosDaoNav extends ProductosDao {
                 rs.updateInt("precio", p4.getPrecio());
                 rs.insertRow();
 
+                printSql(sql);
+            } catch (SQLException ex) {
+                Logger.getLogger(ProductosDao.class.getName()).log(Level.SEVERE, sql, ex);
+            } finally {
+                sessionDB.close();
+            }
+        }
+        return rows;
+    }
+
+    public int deleteConPreparedStatement(Producto p) {
+        int rows = 0;
+        if (sessionDB.connect()) {
+            String sql = String.format("DELETE FROM %s WHERE %s = ?", TABLE_NAME, ID_COL_NAME);
+            try (PreparedStatement preparedStatement = sessionDB.getConn().prepareStatement(sql)) {
+                preparedStatement.setString(1, p.getId());
+                rows = preparedStatement.executeUpdate();
                 printSql(sql);
             } catch (SQLException ex) {
                 Logger.getLogger(ProductosDao.class.getName()).log(Level.SEVERE, sql, ex);

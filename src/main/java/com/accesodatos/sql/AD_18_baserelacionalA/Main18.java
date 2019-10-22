@@ -108,7 +108,7 @@ package com.accesodatos.sql.AD_18_baserelacionalA;
 import com.accesodatos.sql.misc.SessionDB;
 import java.util.ArrayList;
 
-public class Main {
+public class Main18 {
 
     public static void main(String[] args) {
         String[] cod = {"p1", "p2", "p3"};
@@ -126,7 +126,7 @@ public class Main {
             //clean table
 //        ProductosDao.getSession().queryAll().values().forEach(IPersistable::deleteFromDb);
             SessionDB.getSession().dropTable("productos");
-            SessionDB.getSession().createTables(Main.class.getResource("/sql/tablaproductos18.sql").getPath());
+            SessionDB.getSession().createTables(Main18.class.getResource("/sql/tablaproductos18.sql").getPath());
 
             //1
             for (Producto producto : products) {
