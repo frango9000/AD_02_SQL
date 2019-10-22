@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.accesodatos.sql.AD_18_baserelacionalA;
+package com.accesodatos.sql.misc.data;
 
-import com.accesodatos.sql.misc.AbstractDao;
+import com.accesodatos.sql.misc.model.Producto;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

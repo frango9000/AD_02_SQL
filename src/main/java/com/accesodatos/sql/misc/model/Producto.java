@@ -1,10 +1,12 @@
-package com.accesodatos.sql.AD_18_baserelacionalA;
+package com.accesodatos.sql.misc.model;
 
-import com.accesodatos.sql.misc.AbstractDao;
-import com.accesodatos.sql.misc.IPersistable;
+import com.accesodatos.sql.misc.data.AbstractDao;
+import com.accesodatos.sql.misc.data.ProductosDao;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.StringJoiner;
 
-public class Producto implements IPersistable<String> {
+public class Producto implements IPersistable<String>, Serializable {
 
     private String codigo;
     private String descripcion;
@@ -85,4 +87,16 @@ public class Producto implements IPersistable<String> {
             .add("precio=" + precio)
             .toString();
     }
+
+    public static ArrayList<Producto> generateProducts() {
+        ArrayList<Producto> products = new ArrayList<>();
+        String[] cod = {"p1", "p2", "p3"};
+        String[] desc = {"parafusos", "cravos", "tachas"};
+        int[] prezo = {3, 4, 5};
+        for (int i = 0; i < cod.length; i++) {
+            products.add(new Producto(cod[i], desc[i], prezo[i]));
+        }
+        return products;
+    }
+
 }

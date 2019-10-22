@@ -106,26 +106,21 @@ aplicar o metodo executeQuery("consulta") ao obxecto Statement
 package com.accesodatos.sql.AD_18_baserelacionalA;
 
 import com.accesodatos.sql.misc.SessionDB;
+import com.accesodatos.sql.misc.data.ProductosDao;
+import com.accesodatos.sql.misc.model.Producto;
 import java.util.ArrayList;
 
 public class Main18 {
 
     public static void main(String[] args) {
-        String[] cod = {"p1", "p2", "p3"};
-        String[] desc = {"parafusos", "cravos", "tachas"};
-        int[] prezo = {3, 4, 5};
-        ArrayList<Producto> products = new ArrayList<>();
-        for (int i = 0; i < cod.length; i++) {
-            products.add(new Producto(cod[i], desc[i], prezo[i]));
-        }
+        ArrayList<Producto> products = Producto.generateProducts();
         if (SessionDB.getSession().connect()) {
 
-            //establish  connection
+            //abrir session
             SessionDB.getSession().setAutoclose(false);
 
-            //clean table
-//        ProductosDao.getSession().queryAll().values().forEach(IPersistable::deleteFromDb);
-            SessionDB.getSession().dropTable("productos");
+            //drop + create tabla productos
+            SessionDB.getSession().dropTable("productos", true);
             SessionDB.getSession().createTables(Main18.class.getResource("/sql/tablaproductos18.sql").getPath());
 
             //1
@@ -143,12 +138,12 @@ public class Main18 {
 
             //4
             product = products.get(0);
-            product.deleteFromDb();
-            System.out.println("Producto " + product.getId() + (product.updateOnDb() > 0 ? " " : " no") + "eliminado;");
+            System.out.println("Producto " + product.getId() + (product.deleteFromDb() > 0 ? " " : " no ") + "eliminado;");
 
             //5
             System.out.println(ProductosDao.getSession().query("p2").toString());
 
+            //cerrar session
             SessionDB.getSession().setAutoclose(true);
         }
     }

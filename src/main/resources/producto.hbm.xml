@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+  "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+  "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="com.accesodatos.sql.misc.model.Producto" table="productos">
+    <id name="codigo" type="string">
+      <column name="codigo" length="3" />
+    </id>
+    <property name="descripcion" type="string">
+      <column name="descripcion" length="15" />
+    </property>
+    <property name="precio" type="integer">
+      <column name="precio" />
+    </property>
+  </class>
+</hibernate-mapping>

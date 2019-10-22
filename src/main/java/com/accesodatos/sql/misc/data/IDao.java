@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.accesodatos.sql.misc;
+package com.accesodatos.sql.misc.data;
 
+import com.accesodatos.sql.misc.model.IPersistable;
 import java.util.ArrayList;
 import java.util.HashMap;
 

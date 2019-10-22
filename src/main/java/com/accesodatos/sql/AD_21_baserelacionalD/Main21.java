@@ -25,7 +25,7 @@ notas:
  */
 package com.accesodatos.sql.AD_21_baserelacionalD;
 
-import com.accesodatos.sql.AD_18_baserelacionalA.ProductosDao;
+import com.accesodatos.sql.misc.data.ProductosDao;
 
 public class Main21 {
 

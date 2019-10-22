@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.accesodatos.sql.misc;
+package com.accesodatos.sql.misc.data;
 
-import com.accesodatos.sql.AD_18_baserelacionalA.ProductosDao;
+import com.accesodatos.sql.misc.Globals;
+import com.accesodatos.sql.misc.SessionDB;
+import com.accesodatos.sql.misc.model.IPersistable;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

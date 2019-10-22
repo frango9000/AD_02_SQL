@@ -1,7 +1,6 @@
-package com.accesodatos.sql.AD_19_baserelacionalB;
+package com.accesodatos.sql.misc.data;
 
-import com.accesodatos.sql.AD_18_baserelacionalA.Producto;
-import com.accesodatos.sql.AD_18_baserelacionalA.ProductosDao;
+import com.accesodatos.sql.misc.model.Producto;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
