@@ -105,7 +105,6 @@ aplicar o metodo executeQuery("consulta") ao obxecto Statement
  */
 package com.accesodatos.sql.AD_18_baserelacionalA;
 
-import com.accesodatos.sql.misc.IPersistable;
 import com.accesodatos.sql.misc.SessionDB;
 import java.util.ArrayList;
 
@@ -119,33 +118,38 @@ public class Main {
         for (int i = 0; i < cod.length; i++) {
             products.add(new Producto(cod[i], desc[i], prezo[i]));
         }
-        //establish  connection
-        SessionDB.getSession().setAutoclose(false);
+        if (SessionDB.getSession().connect()) {
 
-        //clean table
-        ProductosDao.getSession().queryAll().values().forEach(IPersistable::deleteFromDb);
+            //establish  connection
+            SessionDB.getSession().setAutoclose(false);
 
-        //1
-        for (Producto producto : products) {
-            producto.insertIntoDB();
+            //clean table
+//        ProductosDao.getSession().queryAll().values().forEach(IPersistable::deleteFromDb);
+            SessionDB.getSession().dropTable("productos");
+            SessionDB.getSession().createTables(Main.class.getResource("/sql/tablaproductos18.sql").getPath());
+
+            //1
+            for (Producto producto : products) {
+                producto.insertIntoDB();
+            }
+
+            //2
+            Producto product = products.get(1);
+            product.setDescripcion("Modificacion");
+            System.out.println("Producto " + product.getId() + (product.updateOnDb() > 0 ? " " : " no") + "actualizado;");
+
+            //3
+            ProductosDao.getSession().queryAll().forEach((k, v) -> System.out.println(v.toString()));
+
+            //4
+            product = products.get(0);
+            product.deleteFromDb();
+            System.out.println("Producto " + product.getId() + (product.updateOnDb() > 0 ? " " : " no") + "eliminado;");
+
+            //5
+            System.out.println(ProductosDao.getSession().query("p2").toString());
+
+            SessionDB.getSession().setAutoclose(true);
         }
-
-        //2
-        Producto product = products.get(1);
-        product.setDescripcion("Modificacion");
-        System.out.println("Producto " + product.getId() + (product.updateOnDb() > 0 ? " " : " no") + "actualizado;");
-
-        //3
-        ProductosDao.getSession().queryAll().forEach((k, v) -> System.out.println(v.toString()));
-
-        //4
-        product = products.get(0);
-        product.deleteFromDb();
-        System.out.println("Producto " + product.getId() + (product.updateOnDb() > 0 ? " " : " no") + "eliminado;");
-
-        //5
-        System.out.println(ProductosDao.getSession().query("p2").toString());
-
-        SessionDB.getSession().setAutoclose(true);
     }
 }

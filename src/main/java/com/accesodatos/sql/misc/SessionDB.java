@@ -43,7 +43,7 @@ public class SessionDB implements Globals {
     protected Connection conn;
 
     protected String jdbcDriver = "jdbc:oracle:thin:";
-    protected String jdbcIP = "192.168.1.196";
+    protected String jdbcIP = "10.0.9.146";
     protected String jdbcPort = "1521";
     protected String jdbcCatalog = "orcl";
 
@@ -419,12 +419,14 @@ public class SessionDB implements Globals {
             String[] cmds = multicmd.split(";");
             if (connect()) {
                 for (String sql : cmds) {
-                    try (Statement stmt = getConn().createStatement()) {
-                        printSql(sql);
-                        stmt.executeUpdate(sql.trim());
-                        rows++;
-                    } catch (SQLException ex) {
-                        Flogger.atSevere().withCause(ex).log(sql);
+                    if (sql.length() > 1) {
+                        try (Statement stmt = getConn().createStatement()) {
+                            printSql(sql);
+                            stmt.executeUpdate(sql.trim());
+                            rows++;
+                        } catch (SQLException ex) {
+                            Flogger.atSevere().withCause(ex).log(sql);
+                        }
                     }
                 }
             }
@@ -500,10 +502,10 @@ public class SessionDB implements Globals {
         return rows;
     }
 
-    public boolean dropTable(String tableName) {
+    public boolean dropTable(String tableName, boolean cascade) {
         boolean droped = false;
         if (connect() && tableName.trim().length() > 1) {
-            String sql = "DROP TABLE '" + tableName.trim() + "'";
+            String sql = "DROP TABLE " + tableName.trim() + (cascade ? " CASCADE CONSTRAINTS" : "");
             try (Statement statement = conn.createStatement()) {
                 printSql(sql);
                 droped = statement.execute(sql);
@@ -515,6 +517,11 @@ public class SessionDB implements Globals {
         }
         return droped;
     }
+
+    public boolean dropTable(String tableName) {
+        return dropTable(tableName, true);
+    }
+
 
     public int dropTables(List<String> tables) {
         int rows = 0;
