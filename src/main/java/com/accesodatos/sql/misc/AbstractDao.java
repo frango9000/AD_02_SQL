@@ -5,6 +5,9 @@
  */
 package com.accesodatos.sql.misc;
 
+import com.accesodatos.sql.AD_18_baserelacionalA.ProductosDao;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -125,5 +128,29 @@ public abstract class AbstractDao<K, V extends IPersistable<K>> implements IDao<
         if (Globals.SQL_DEBUG) {
             System.out.println(sql);
         }
+    }
+
+    public static String describeTable(SessionDB sessionDB, String tableName) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (sessionDB.connect()) {
+            String sql = String.format("SELECT * FROM %s", tableName);
+            try (Statement ps = sessionDB.getConn().createStatement();
+                 ResultSet rs = ps.executeQuery(sql)) {
+                ResultSetMetaData rsm = rs.getMetaData();
+                for (int i = 1; i <= rsm.getColumnCount(); i++) {
+                    stringBuilder.append(rsm.getColumnName(i) + ", " + rsm.getColumnTypeName(i) + ", (" + rsm.getColumnDisplaySize(i) + ")\n");
+                }
+                printSql(sql);
+            } catch (SQLException ex) {
+                Logger.getLogger(ProductosDao.class.getName()).log(Level.SEVERE, sql, ex);
+            } finally {
+                sessionDB.close();
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    public String describeTable() {
+        return describeTable(sessionDB, TABLE_NAME);
     }
 }
