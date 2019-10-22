@@ -18,14 +18,14 @@ import java.util.logging.Logger;
 /**
  * @author NarF
  */
-public final class ProductosDao extends AbstractDao<String, Producto> {
+public class ProductosDao extends AbstractDao<String, Producto> {
 
     /**
      * Singleton lazy initialization
      */
-    private static ProductosDao productoDao;
+    protected static ProductosDao productoDao;
 
-    private ProductosDao() {
+    protected ProductosDao() {
         TABLE_NAME  = "productos";
         ID_COL_NAME = "codigo";
     }

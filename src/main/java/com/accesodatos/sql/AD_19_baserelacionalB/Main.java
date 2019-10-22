@@ -43,6 +43,49 @@ IMPORTANTE: a consulta de todos os campos dunha fila debe facerse explicitando o
  */
 package com.accesodatos.sql.AD_19_baserelacionalB;
 
+import com.accesodatos.sql.AD_18_baserelacionalA.Producto;
+import com.accesodatos.sql.misc.SessionDB;
+import java.util.ArrayList;
+
 public class Main {
+
+    public static void main(String[] args) {
+        String[] cod = {"p1", "p2", "p3"};
+        String[] desc = {"parafusos", "cravos", "tachas"};
+        int[] prezo = {3, 4, 5};
+        ArrayList<Producto> products = new ArrayList<>();
+        for (int i = 0; i < cod.length; i++) {
+            products.add(new Producto(cod[i], desc[i], prezo[i]));
+        }
+        if (SessionDB.getSession().connect()) {
+
+            //establish  connection
+            SessionDB.getSession().setAutoclose(false);
+
+            //clean table
+            SessionDB.getSession().dropTable("productos");
+            SessionDB.getSession().createTables(Main.class.getResource("/sql/tablaproductos18.sql").getPath());
+
+            for (Producto producto : products) {
+                producto.insertIntoDB();
+            }
+
+            System.out.println("Actualizamos p2");
+            ProductosDaoNav.getSession().actualizar("p2", 8);
+            System.out.println(ProductosDaoNav.getSession().query("p2"));
+
+            System.out.println("Insertamos p4");
+            Producto p4 = new Producto("p4", "martelo", 20);
+            ProductosDaoNav.getSession().insertEnResultSet(p4);
+            ProductosDaoNav.getSession().queryAll().values().forEach(p -> System.out.println(p.toString()));
+
+            System.out.println("Eliminamos p1");
+            ProductosDaoNav.getSession().deleteEnResultSet("p1");
+            ProductosDaoNav.getSession().queryAll().values().forEach(p -> System.out.println(p.toString()));
+
+            SessionDB.getSession().setAutoclose(true);
+        }
+
+    }
 
 }
