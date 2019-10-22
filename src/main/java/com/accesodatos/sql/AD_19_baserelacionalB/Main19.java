@@ -71,7 +71,7 @@ public class Main19 {
             }
 
             System.out.println("Actualizamos p2");
-            ProductosDaoNav.getSession().actualizar("p2", 8);
+            ProductosDaoNav.getSession().updateEnResultSet("p2", 8);
             System.out.println(ProductosDaoNav.getSession().query("p2"));
 
             System.out.println("Insertamos p4");
