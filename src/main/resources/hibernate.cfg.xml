@@ -5,7 +5,8 @@
 <hibernate-configuration>
   <session-factory>
     <property name="hibernate.connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
-    <property name="hibernate.connection.url">jdbc:oracle:thin:@192.168.1.196:1521:orcl</property>
+    <property name="hibernate.connection.url">jdbc:oracle:thin:@10.0.9.146:1521:orcl</property>
+    <!--    <property name="hibernate.connection.url">jdbc:oracle:thin:@192.168.1.196:1521:orcl</property>-->
     <property name="hibernate.connection.username">hr</property>
     <property name="hibernate.connection.password">hr</property>
     <property name="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</property>
