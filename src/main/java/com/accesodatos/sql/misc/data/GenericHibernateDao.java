@@ -37,6 +37,13 @@ public class GenericHibernateDao<K, V extends IPersistable<K>> implements Global
             findGenericClass();
     }
 
+    @SuppressWarnings("unchecked")
+    public Class<V> findGenericClass() {
+        if (clazz == null)
+            clazz = (Class<V>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        return clazz;
+    }
+
     public GenericHibernateDao(Session session, Class<V> clazz, String ID_COL_NAME) {
         this(session, clazz);
         this.ID_COL_NAME = ID_COL_NAME;
@@ -49,13 +56,6 @@ public class GenericHibernateDao<K, V extends IPersistable<K>> implements Global
     public void setSession(Session session) {
         this.session    = session;
         criteriaBuilder = session.getCriteriaBuilder();
-    }
-
-    @SuppressWarnings("unchecked")
-    public Class<V> findGenericClass() {
-        if (clazz == null)
-            clazz = (Class<V>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        return clazz;
     }
 
     public Optional<V> findById(K id) {
