@@ -533,6 +533,20 @@ public class SessionDB implements Globals {
         return rows;
     }
 
+    public boolean createRoutine(String sql) {
+        boolean success = false;
+        if (connect() && sql.trim().length() > 1) {
+            try (Statement statement = conn.createStatement()) {
+                printSql(sql);
+                success = statement.execute(sql);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                close();
+            }
+        }
+        return success;
+    }
 
     @Override
     public String toString() {

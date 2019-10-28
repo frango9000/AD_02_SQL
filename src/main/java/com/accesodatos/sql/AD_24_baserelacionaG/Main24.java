@@ -53,6 +53,29 @@ show errors;
 */
 package com.accesodatos.sql.AD_24_baserelacionaG;
 
+import com.accesodatos.sql.misc.SessionDB;
+import java.sql.CallableStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Main24 {
 
+    public static void main(String[] args) {
+        System.out.println(getPrecio("p4"));
+    }
+
+    public static int getPrecio(String codigo) {
+        int precio = -1;
+        if (SessionDB.getSession().connect()) {
+            try (CallableStatement callableStatement = SessionDB.getSession().getConn().prepareCall("SELECT prezo_produto(?) FROM dual")) {
+                callableStatement.setString(1, codigo);
+                ResultSet resultSet = callableStatement.executeQuery();
+                if (resultSet.next())
+                    precio = resultSet.getInt(1);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return precio;
+    }
 }

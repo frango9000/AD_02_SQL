@@ -33,8 +33,6 @@ Create or replace procedure pjavaprocoracle (entrada integer, saida in out integ
 BEGIN
 saida := saida+entrada;
 end;
-
-
 /
 
 probar o procedemento dende sqlplus
@@ -51,6 +49,32 @@ show errors;
 */
 package com.accesodatos.sql.AD_23_baserelacionaF;
 
+import com.accesodatos.sql.misc.SessionDB;
+import java.sql.CallableStatement;
+import java.sql.SQLException;
+import java.sql.Types;
+
 public class Main23 {
+
+    public static void main(String[] args) {
+        System.out.println(getSuma(67, 2));
+    }
+
+    public static int getSuma(int a, int b) {
+        String sql = "{ call pjavaprocoracle(?, ?) }";
+        int suma = -1;
+        if (SessionDB.getSession().connect()) {
+            try (CallableStatement callableStatement = SessionDB.getSession().getConn().prepareCall(sql)) {
+                callableStatement.setInt(1, a);
+                callableStatement.setInt(2, b);
+                callableStatement.registerOutParameter(2, Types.INTEGER);
+                callableStatement.execute();
+                suma = callableStatement.getInt(2);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return suma;
+    }
 
 }
