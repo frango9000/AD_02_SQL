@@ -5,6 +5,7 @@
  */
 package com.accesodatos.sql.misc;
 
+import java.io.File;
 import java.util.logging.Level;
 
 /**
@@ -21,7 +22,8 @@ public interface Globals {
 
     String DB_PREFIX = "tdc_";
 
-    String ROOT_PATH = "src/main/java/tiendaclub/";
 
     boolean SAFE_UPDATE = true;//enforce objects to have a backup to fallback to in case update statement fails
+
+    String RES_PATH = new File("").getAbsolutePath() + "/src/main/java/com/accesodatos/sql/AD_Exa_15/";
 }
