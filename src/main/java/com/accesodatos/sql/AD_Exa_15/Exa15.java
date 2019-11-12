@@ -1,65 +1,47 @@
 package com.accesodatos.sql.AD_Exa_15;
 
 import com.accesodatos.sql.misc.SessionDB;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 
 public class Exa15 {
 
-    public static Connection conexion = null;
-    protected static SessionDB sessionDB = SessionDB.getSession();
-
-    public static Connection getConexion() throws SQLException {
-        String usuario = "hr";
-        String password = "hr";
-        String host = "localhost";
-        String puerto = "1521";
-        String sid = "orcl";
-        String ulrjdbc = "jdbc:oracle:thin:" + usuario + "/" + password + "@" + host + ":" + puerto + ":" + sid;
-
-        conexion = DriverManager.getConnection(ulrjdbc);
-        return conexion;
-    }
-
-
-    public static void closeConexion() throws SQLException {
-        conexion.close();
-    }
+    static final String RES_PATH = new File("").getAbsolutePath() + "/src/main/java/com/accesodatos/sql/AD_Exa_15/";
+    private static SessionDB sessionDB = SessionDB.getSession();
 
     public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException, XMLStreamException {
         //codigo aqui
-
-        ArrayList<Platos> platos = Creaplatoss.readPlatos();
-
-        platos.forEach(v -> {
+        HashSet<PlatoGraso> platosGrasos = new HashSet<>();
+        for (Platos plato : Creaplatoss.readPlatos()) {
             HashMap<String, Integer> composicion = new HashMap<>();
-            System.out.println(v.toString());
             if (sessionDB.connect()) {
+                System.out.println(plato.toString());
                 String sql = "select * from composicion where codp = ?";
                 try (PreparedStatement ps = sessionDB.getConn().prepareStatement(sql)) {
-                    ps.setString(1, v.getCodigop());
+                    ps.setString(1, plato.getCodigop());
                     ResultSet resultSet = ps.executeQuery();
                     while (resultSet.next()) {
                         composicion.put(resultSet.getString(2), resultSet.getInt(3));
-
                     }
-
-
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-
             }
-            final int grasatotal = 0;
-            composicion.forEach((codc, peso) -> {
+            int grasatotal = 0;
+            for (Entry<String, Integer> entry : composicion.entrySet()) {
+                String codc = entry.getKey();
+                int peso = entry.getValue();
                 System.out.println("Codigo componente: " + codc);
 
                 String sql = "select graxa from componentes where codc = ?";
@@ -79,16 +61,52 @@ public class Exa15 {
                 int grasaparcial = ((grasa * peso) / 100);
                 System.out.println("Total de grasa del componente " + grasaparcial);
                 grasatotal += grasaparcial;
-
-
-            });
+            }
+            PlatoGraso platoGraso = new PlatoGraso(plato.getCodigop(), plato.getNomep(), grasatotal);
+            platosGrasos.add(platoGraso);
+            System.out.println("Total en grasas del plato: " + grasatotal);
             System.out.println();
-
-        });
-
+        }
+        sessionDB.close();
+        writePlatosGrasosSAX(platosGrasos);
     }
 
+    private static void writePlatosGrasosSAX(HashSet<PlatoGraso> platoGrasos) {
+        XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
+        XMLStreamWriter out = null;
+        try {
+            out = xmlOutputFactory.createXMLStreamWriter(new FileWriter(RES_PATH + "platosgrasos.xml"));
+            out.writeStartDocument("1.0");
+            out.writeStartElement("platos");
+            for (PlatoGraso platoGraso : platoGrasos) {
+                writePlatoSAX(platoGraso, out);
+            }
+            out.writeEndElement();
+        } catch (XMLStreamException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                    System.out.println("Platos grasos guardados en XML");
+                }
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+    private static void writePlatoSAX(PlatoGraso platoGraso, XMLStreamWriter out) throws XMLStreamException {
+        out.writeStartElement("plato");
+        out.writeAttribute("codigo", platoGraso.getCodigop());
+        out.writeStartElement("nome");
+        out.writeCharacters(platoGraso.getNomep());
+        out.writeEndElement();
+        out.writeStartElement("graxa");
+        out.writeCharacters(Integer.toString(platoGraso.getGrasa()));
+        out.writeEndElement();
+        out.writeEndElement();
+    }
 }
 
    

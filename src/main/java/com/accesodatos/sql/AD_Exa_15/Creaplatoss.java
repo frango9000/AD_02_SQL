@@ -1,6 +1,5 @@
 package com.accesodatos.sql.AD_Exa_15;
 
-import com.accesodatos.sql.misc.Globals;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -24,20 +23,16 @@ public class Creaplatoss {
         ArrayList<Platos> platos = new ArrayList<>();
         try {
             Platos object2;
-            FileInputStream fis = new FileInputStream(Globals.RES_PATH + "platoss");
+            FileInputStream fis = new FileInputStream(Exa15.RES_PATH + "platoss");
             ObjectInputStream ois = new ObjectInputStream(fis);
 
             while ((object2 = (Platos) ois.readObject()) != null) {
-//                System.out.println("object2: " + object2);
                 platos.add(object2);
-//                System.out.println(object2.getPrice());
             }
             ois.close();
             fis.close();
         } catch (Exception e) {
-            System.out.println("Exception during deserialization: " +
-                               e);
-            //System.exit(0);
+            System.out.println("Exception during deserialization: " + e);
         }
         return platos;
     }
@@ -45,7 +40,7 @@ public class Creaplatoss {
     private static void writePlatos(String[] codes, String[] descricion) {
         try {
             Platos pl = null;
-            FileOutputStream fos = new FileOutputStream(Globals.RES_PATH + "platoss");
+            FileOutputStream fos = new FileOutputStream(Exa15.RES_PATH + "platoss");
             ObjectOutputStream oos = new ObjectOutputStream(fos);
 
             for (int i = 0; i < codes.length; i++) {
