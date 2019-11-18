@@ -1,13 +1,15 @@
 package com.accesodatos.sql.AD_Exa_15b;
 
-import com.accesodatos.sql.AD_Exa_15.Platos;
 import com.accesodatos.sql.misc.SessionDB;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,21 +27,28 @@ public class Main15b {
 
     public static void main(String[] args) {
 
-        getPlatosXML().forEach(e -> System.out.println(e));
+        ArrayList<PlatoExtended> platos = getPlatosXML();
+        platos.forEach(plato -> {
+            findComponentes(plato);
+            plato.getComponentes().forEach((componente, integer) -> findGrasaPercent(componente));
+        });
+
+        writePlatosBin(platos);
+        readPlatosBin();
 
     }
 
-    private static ArrayList<Platos> getPlatosXML() {
-        ArrayList<Platos> platos = new ArrayList<>();
+    private static ArrayList<PlatoExtended> getPlatosXML() {
+        ArrayList<PlatoExtended> platos = new ArrayList<>();
         XMLStreamReader in = null;
         try {
             in = XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(RES_PATH + "platos.xml"));
-            Platos plato = null;
+            PlatoExtended plato = null;
             while (in.hasNext()) {
                 if (in.getEventType() == XMLStreamConstants.START_ELEMENT) {
 //                    System.out.println(in.getEventType() + " " + in.getLocalName());
                     if (in.getLocalName().equals("Plato")) {
-                        plato = new Platos();
+                        plato = new PlatoExtended();
                         platos.add(plato);
                         plato.setCodigop(in.getAttributeValue(0));
                     } else if (in.getLocalName().equals("nomep")) {
@@ -61,7 +70,7 @@ public class Main15b {
         return platos;
     }
 
-    public void findComponentes(PlatoExtended plato) {
+    public static void findComponentes(PlatoExtended plato) {
         try (BufferedReader in = new BufferedReader(new FileReader(RES_PATH + "composicion.txt"))) {
             in.lines().forEach(action -> {
                 String[] fields = action.split("#");
@@ -73,7 +82,7 @@ public class Main15b {
         }
     }
 
-    public void findGrasaPercent(Componente componente) {
+    public static void findGrasaPercent(Componente componente) {
         if (sessionDB.connect()) {
             String sql = "select graxa from componentes where codc = ?";
             int grasa = 0;
@@ -86,6 +95,31 @@ public class Main15b {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static void writePlatosBin(ArrayList<PlatoExtended> platos) {
+        File file1 = new File(RES_PATH + "platos.bin");
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file1))) {
+            for (PlatoExtended platoExtended : platos) {
+                outputStream.writeObject(platoExtended);
+            }
+            outputStream.writeObject(null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void readPlatosBin() {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(RES_PATH + "platos.bin"))) {
+            while (true) {
+                Object o = in.readObject();
+                if (o == null)
+                    break;
+                System.out.println(o.toString());
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 

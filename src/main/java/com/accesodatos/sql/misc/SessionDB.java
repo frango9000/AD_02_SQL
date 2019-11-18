@@ -43,7 +43,7 @@ public class SessionDB implements Globals {
     protected Connection conn;
 
     protected String jdbcDriver = "jdbc:oracle:thin:";
-    protected String jdbcIP = "10.0.9.146";
+    protected String jdbcIP = "10.0.9.26";
     //    protected String jdbcIP = "192.168.1.196";
     protected String jdbcPort = "1521";
     protected String jdbcCatalog = "orcl";

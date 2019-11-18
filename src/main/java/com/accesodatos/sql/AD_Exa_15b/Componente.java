@@ -1,8 +1,9 @@
 package com.accesodatos.sql.AD_Exa_15b;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Componente {
+public class Componente implements Serializable {
 
     String codc;
     String nomec;
