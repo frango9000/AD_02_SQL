@@ -116,7 +116,7 @@ public class Main15b {
                 Object o = in.readObject();
                 if (o == null)
                     break;
-                System.out.println(o.toString());
+                System.out.println(((PlatoExtended) o).getGrasaTotal());
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
